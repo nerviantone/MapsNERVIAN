@@ -1,6 +1,7 @@
 package nervian.example.com.mapsnervian;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.places.GeoDataClient;
@@ -34,9 +36,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private PlaceDetectionClient mPlaceDetectionClient;
 
     // The entry point to the Fused Location Provider.
+
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
     private boolean mLocationPermissionGranted;
 
     private Location mLastKnownLocation;
@@ -52,7 +56,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
 
         // Construct a GeoDataClient.
@@ -63,9 +69,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
 
 
@@ -91,8 +100,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+
             mLocationPermissionGranted = true;
+
         } else {
+
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -103,21 +115,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
+
         mLocationPermissionGranted = false;
+
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+                {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+
+                {
                     mLocationPermissionGranted = true;
                 }
             }
         }
+
         updateLocationUI();
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -141,20 +162,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void updateLocationUI() {
-        if (mMap == null) {
+
+        if (mMap == null)
+
+        {
             return;
         }
         try {
-            if (mLocationPermissionGranted) {
+
+            if (mLocationPermissionGranted)
+            {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            } else {
+            } else
+
+                {
+
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e)
+
+        {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -165,20 +196,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          * cases when a location is not available.
          */
         try {
-            if (mLocationPermissionGranted) {
+            if (mLocationPermissionGranted)
+
+            {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
+
+
                             mLastKnownLocation = (Location) task.getResult();
+
+                            CircleOptions circleOptions = new CircleOptions()
+                                    .center( new LatLng(mLastKnownLocation.getLatitude(),
+                                            mLastKnownLocation.getLongitude()))
+                                    .strokeColor(Color.argb(50, 70,70,70))
+                                    .fillColor( Color.argb(100, 150,150,150) )
+                                    .radius(1000);
+                            mMap.addCircle( circleOptions );
+
                             mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
                                    mLastKnownLocation.getLongitude())).title("Current Location"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                        } else {
+                        }
+
+                        else
+
+                            {
+
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
