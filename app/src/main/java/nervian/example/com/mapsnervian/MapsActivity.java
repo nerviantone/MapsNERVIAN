@@ -74,11 +74,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
         mapFragment.getMapAsync(this);
 
 
-    }
+
+        }
+
+
+
 
 
     /**
@@ -209,16 +212,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             mLastKnownLocation = (Location) task.getResult();
 
-                            CircleOptions circleOptions = new CircleOptions()
+                          /*  CircleOptions circleOptions = new CircleOptions()
                                     .center( new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()))
                                     .strokeColor(Color.argb(50, 70,70,70))
                                     .fillColor( Color.argb(100, 150,150,150) )
                                     .radius(1000);
-                            mMap.addCircle( circleOptions );
+                            mMap.addCircle( circleOptions ); */
 
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                   mLastKnownLocation.getLongitude())).title("Current Location"));
+                          //  mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
+                               //    mLastKnownLocation.getLongitude())).title("Current Location"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
